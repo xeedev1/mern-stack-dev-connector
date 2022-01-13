@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://user:user@cluster0.fibdt.mongodb.net/LolopinoDB?retryWrites=true&w=majority",
+  "jwtSecret": "mysecrettoken"
+}
