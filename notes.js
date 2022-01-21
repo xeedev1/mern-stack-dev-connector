@@ -1,5 +1,6 @@
 //WYAK: What You Already Know
 //ML: Machine Language
+//STFFMIC: See The File For More Info and Comments
 /*
 extensions we'll need:
     - bracket pair colorizer
@@ -262,7 +263,7 @@ const config = require("config");
 
 module.exports = function (req, res, next) {
   // directly export this function, next parameter is used to move middleware to the next middleware when this middleware completes it's task
-  // get token from header
+  // get token from header of name x-auth-token
   const token = req.header("x-auth-token"); // we can name it whatever we want instead of x-auth-token, then we will have to use that name as headers in postman
 
   // check if not token
@@ -297,3 +298,110 @@ router.get("/", auth, async (req, res) => {
 /********/
 User - Login;
 /********/
+// we copied all the  router.post  code block from users.js and pasted in auth.js and edited a few things as:
+
+// @route   POST api/auth
+// @desc    User login
+// @access  Public
+
+router.post(
+  "/",
+  [
+    check("email", "Email is required").isEmail(),
+    check("password", "password is required").exists(), // check if email exists or not, empty or wrong email means invalid credentials
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    console.log(errors);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // User registeration
+    const { email, password } = req.body; // removed other things we just need email and password
+
+    try {
+      // credentails are correct or not
+      let user = await User.findOne({ email }); //find user by email
+      if (!user) {
+        // if user not there, then:
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Invalid credentials" }] }); // user not found
+      }
+
+      const isMatch = await bcrypt.compare(password, user.password); // means bcrypt will compare entered password in body (password) and the users, hashed password, and then it will return true or false based on that
+
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ errors: [{ msg: "Invalid credentials" }] }); // incorrect password
+      }
+
+      const payload = {
+        user: {
+          id: user.id,
+        },
+      };
+      jwt.sign(
+        payload,
+        config.get("jwtSecret"),
+        { expiresIn: 360000 },
+        (error, token) => {
+          if (error) throw error;
+          res.json({ token });
+        }
+      );
+
+      //   console.log(req.body);
+      //   res.send("Users Registered");
+    } catch (error) {
+      console.log(error);
+      res.status(500).send("Server Error");
+    }
+  }
+);
+
+/////////////////////////////////////////365 - Profile///////////////////////////////////////////////////
+
+/*******/
+models > Profile.js;
+/*******/
+// Then we Created a Profile.js inside the models and added the code - STFFMIC
+
+/*******/
+routes > api > profile.js;
+/*******/
+
+/* now we are going to add a few things to GET the data from the profile of the user */
+
+const express = require("express");
+const router = express.Router();
+const auth = require("../../middleware/auth"); // to use the authentication
+const User = require("../../models/User"); // to use the user model
+const Profile = require("../../models/Profile"); // to use the profile model
+
+// @route   GET api/profile/me
+// @desc    user's profile route where all of his info is available
+// @access  Private
+
+router.get("/me", auth, async (req, res) => {
+  // find the profile of the user from user id and then get his profile and avatar alongwith his profile fields
+  const profile = await Profile.findOne({ user: req.user.id }).populate(
+    "user",
+    ["name", "avatar"]
+  ); // .populate('from',['what','to','populate'])
+
+  if (!profile) {
+    res.status(404).json({ msg: "there is no profile for this user" });
+  }
+
+  res.json(profile);
+});
+
+module.exports = router;
+
+// now inside that profile we will use POST method to add data of the user's profile
+// @route   POST api/profile
+// @desc    user's profile route from where all of his info is add
+// @access  Private
