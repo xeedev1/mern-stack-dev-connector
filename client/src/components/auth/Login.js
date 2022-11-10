@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
+import Alert from "../layout/Alert";
 
 // import axios from "axios";
 
@@ -21,6 +22,7 @@ const Login = () => {
   };
   return (
     <Fragment>
+      <Alert />
       <div className="container">
         <h1 className="large text-primary">Sign In</h1>
         <p className="lead">

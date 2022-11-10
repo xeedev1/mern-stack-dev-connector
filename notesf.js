@@ -131,6 +131,8 @@ export default store;
 // redux
 import { Provider } from "react-redux"; // connects the react and redux
 import store from "./store"; // import the store that we just created
+import Register from "./client/src/components/auth/Register";
+import { connect } from "mongoose";
 
 // go to the index.js inside reducers folder and write this:
 // import { combineReducers } from "redux";
@@ -173,3 +175,11 @@ actions > alert.js;
 //     payload: { msg, alertType, id }, // action.payload comes from here
 //   });
 // };
+
+auth > Register.js;
+// import {connect} from "react-redux";
+// export default connect()(Register);    connect()(component_name)
+// import {setAlert} from "../../actions/alert"
+// connect is required to use actions i.e.
+// connect(null, {setAlert})
+// we can now use props watch video [Alert Componenet and action call] from [2:24]

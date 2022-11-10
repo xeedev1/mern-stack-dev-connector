@@ -1,8 +1,12 @@
 import React, { Fragment, useState } from "react";
+import {connect} from "react-redux";
 import { Link } from "react-router-dom";
+import { setAlert } from "../../actions/alert";
+import PropTypes from 'prop-types';
+import Alert from "../layout/Alert";
 // import axios from "axios";
 
-const Register = () => {
+const Register = ({setAlert}) => {
   // first argument: formData is some value that we pass in as default in useState() and setFormData is a function that sets a new value to the formData so that the formData updates to a new value. we can pass in anything inside the useState() brackets, if it's a number or string it will be taken as that if it's an object it will be stored in formData as that.
   const [formData, setFormData] = useState({
     name: "",
@@ -19,7 +23,7 @@ const Register = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     if (password !== password2) {
-      console.log("Password missmatched");
+      setAlert("Password missmatched","danger");
     } else {
       console.log("Success");
       // const newUser = {
@@ -40,6 +44,7 @@ const Register = () => {
   };
   return (
     <Fragment>
+      <Alert />
       <div className="container">
         <h1 className="large text-primary">Sign Up</h1>
         <p className="lead">
@@ -99,4 +104,7 @@ const Register = () => {
   );
 };
 
-export default Register;
+Register.propTypes = {
+  setAlert: PropTypes.func.isRequired,
+}
+export default connect(null, {setAlert})(Register);
