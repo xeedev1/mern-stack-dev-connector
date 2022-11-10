@@ -1,4 +1,6 @@
 {
   "mongoURI": "mongodb+srv://user:user@cluster0.fibdt.mongodb.net/LolopinoDB?retryWrites=true&w=majority",
-  "jwtSecret": "mysecrettoken"
+  "jwtSecret": "mysecrettoken",
+  "githubClientID": "2a3c46861f113e51d23e",
+  "githubClientSecret": "5870e2190ceb094016204ac1348e6bdf79c0c8ae"
 }
